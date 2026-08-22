@@ -2,7 +2,7 @@
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
   "name": "io.github.greencore-solutions/gsc-marketplace",
   "title": "AI Orderability (AIO) Agents CPG with x402: Retail & Marketplace Sourcing",
-  "description": "CPG sourcing for AI Agents with x402 — beauty & personal care brands, instant messaging for agents, GSC Trading Desk human-in-the-loop. GreenCore Solutions Corp.",
+  "description": "CPG sourcing for AI Agents with x402: BPC brands, agent IM, Trading Desk. GreenCore Solutions Corp.",
   "version": "1.0.0",
   "websiteUrl": "https://gsc-marketplace.ai",
   "repository": {
