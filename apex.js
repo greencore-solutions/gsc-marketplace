@@ -202,7 +202,14 @@ footer .legal{margin-top:38px;padding-top:20px;border-top:1px solid var(--hair);
   <div class="eyebrow">Contact</div>
   <h2 style="font-size:32px;margin-top:12px">A human answers — that's rather the point.</h2>
   <p style="margin-top:12px;max-width:60ch">Marketplace managers and sourcing teams: the GSC Trading Desk is the human channel. Agents: use the door in the headers.</p>
-  <div class="cta-row"><a class="btn primary" href="${TD}">GSC Trading Desk</a><a class="btn" href="/llms.txt">llms.txt</a><a class="btn" href="/.well-known/mcp/server-card.json">MCP server card</a></div>
+  <form action="https://formspree.io/f/mppannbj" method="POST" style="margin-top:28px;display:grid;gap:12px;max-width:540px"><input type="hidden" name="_next" value="https://gsc-marketplace.ai/">
+    <div><label for="f-name" style="font-size:13px;font-weight:600;color:var(--grey)">Name</label><input id="f-name" type="text" name="name" required autocomplete="name" style="width:100%;padding:12px 14px;border:1px solid var(--hair);border-radius:8px;font:inherit;font-size:15px;background:var(--white)"></div>
+    <div><label for="f-company" style="font-size:13px;font-weight:600;color:var(--grey)">Company</label><input id="f-company" type="text" name="company" autocomplete="organization" style="width:100%;padding:12px 14px;border:1px solid var(--hair);border-radius:8px;font:inherit;font-size:15px;background:var(--white)"></div>
+    <div><label for="f-email" style="font-size:13px;font-weight:600;color:var(--grey)">Work email</label><input id="f-email" type="email" name="email" required autocomplete="email" style="width:100%;padding:12px 14px;border:1px solid var(--hair);border-radius:8px;font:inherit;font-size:15px;background:var(--white)"></div>
+    <div><label for="f-msg" style="font-size:13px;font-weight:600;color:var(--grey)">Your markets and the question a human should answer</label><textarea id="f-msg" name="message" rows="4" required style="width:100%;padding:12px 14px;border:1px solid var(--hair);border-radius:8px;font:inherit;font-size:15px;background:var(--white)"></textarea></div>
+    <button class="btn primary" type="submit" style="justify-self:start;cursor:pointer;border:0">Send to the GSC Trading Desk</button>
+  </form>
+  <div class="cta-row"><a class="btn" href="${TD}">GSC Trading Desk</a><a class="btn" href="/llms.txt">llms.txt</a><a class="btn" href="/.well-known/mcp/server-card.json">MCP server card</a></div>
 </div></section>
 
 <footer><div class="wrap">
