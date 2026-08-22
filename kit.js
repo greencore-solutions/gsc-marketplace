@@ -124,7 +124,7 @@ Anything that creates obligation — an RFQ, terms, a purchase order — leaves 
 ## Agent registration (self-contained flow)
 
 - **Agent audience:** marketplace and retail sourcing agents, and the operators integrating them with GSC-Marketplace and the CPG Knowledge Graph.
-- **Registration endpoint:** ${TRADING_DESK} — the GSC Trading Desk (the humans' channel, informed by Navigator). There is no self-serve dynamic client registration; every registration is human-reviewed.
+- **Registration endpoint:** ${TRADING_DESK} — the GSC Trading Desk (the humans' channel, informed by Navigator). Intake: the Trading Desk form on gsc-navigator.ai (POST https://formspree.io/f/xljrwwlk with fields name, email, message). There is no self-serve dynamic client registration; every registration is human-reviewed.
 - **Agents' channel:** Instant Messaging — ${DOORS.instant_messaging.inbound} → ${DOORS.instant_messaging.mcp} (tools: ${DOORS.instant_messaging.tools.join(", ")}). Typed, identified, ticketed, human-signed.
 - **Supported method — verified email:** GSC verifies the operator's email, then provisions credentials after review.
 - **Credential use:** GSC issues **Microsoft Entra OAuth 2.0 client credentials** (client_credentials grant against the issuer above); present the access token as a **Bearer token in the Authorization header**. Revocation on request via the same endpoint.
