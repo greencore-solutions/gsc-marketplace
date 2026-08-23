@@ -63,7 +63,9 @@ export function paymentRequired(url) {
 // "CDP-API-KEY-ID: …" + "CDP-API-KEY-SECRET: …" — CDP's facilitator takes a per-request JWT (2-minute life), minted here.
 function authLines() { const m = {}; for (const line of CFG.facilitatorAuth.replace(/\n/g, "\n").split("\n")) { const k = line.indexOf(":"); if (k > 0) m[line.slice(0, k).trim()] = line.slice(k + 1).trim(); } return m; }
 function cdpJwt(method, path) {
-  const m = authLines(); const id = m["CDP-API-KEY-ID"], secret = m["CDP-API-KEY-SECRET"]; if (!id || !secret) return null;
+  // CDP key pair: either lines "CDP-API-KEY-ID"/"CDP-API-KEY-SECRET" inside the credential, or the bare secret as the credential plus X402_FACILITATOR_KEY_ID.
+  const m = authLines(); const bare = CFG.facilitatorAuth.indexOf(":") < 0 ? CFG.facilitatorAuth : "";
+  const id = m["CDP-API-KEY-ID"] || (process.env.X402_FACILITATOR_KEY_ID || "").trim(), secret = m["CDP-API-KEY-SECRET"] || bare; if (!id || !secret) return null;
   const u = new URL(CFG.facilitator); const now = Math.floor(Date.now() / 1000);
   const claims = { sub: id, iss: "cdp", aud: ["cdp_service"], nbf: now, exp: now + 120, uris: [`${method} ${u.host}${u.pathname}${path}`] };
   let key, alg, opts = {};
@@ -88,7 +90,7 @@ export async function facilitatorState(force = false) {
   if (!force && facProbe.checked_at && Date.now() - Date.parse(facProbe.checked_at) < 300000) return facProbe;
   const mode = cdpJwt("GET", "/supported") ? "cdp-jwt" : "static-headers";
   const rawLines = CFG.facilitatorAuth.replace(/\n/g, "\n").split("\n").filter((l) => l.trim());
-  const shape = { lines: rawLines.length, header_names: rawLines.filter((l) => l.indexOf(":") > 0).map((l) => l.slice(0, l.indexOf(":")).trim()), colonless_lines: rawLines.filter((l) => l.indexOf(":") <= 0).map((l) => `${l.trim().length} chars`), url: CFG.facilitator };
+  const shape = { key_id_env_set: Boolean((process.env.X402_FACILITATOR_KEY_ID || "").trim()), lines: rawLines.length, header_names: rawLines.filter((l) => l.indexOf(":") > 0).map((l) => l.slice(0, l.indexOf(":")).trim()), colonless_lines: rawLines.filter((l) => l.indexOf(":") <= 0).map((l) => `${l.trim().length} chars`), url: CFG.facilitator };
   try {
     const r = await fetch(`${CFG.facilitator}/supported`, { method: "GET", headers: facHeaders("GET", "/supported"), signal: AbortSignal.timeout(20000) });
     const text = await r.text(); let j = {}; try { j = JSON.parse(text); } catch {}
