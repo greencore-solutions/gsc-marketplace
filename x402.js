@@ -93,16 +93,16 @@ const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&l
 const exchangeBlock = (ready) => `<div class="surfaces"><span style="color:#8b8378"># 1 · Ask for the resource — the server answers 402 with the terms (x402 v2)</span>
 $ curl -i "https://${APEX}/x402/resolve"
 HTTP/2 402
-PAYMENT-REQUIRED: &lt;base64 of the JSON body&gt;
+PAYMENT-REQUIRED: base64(JSON body below)
 ${ready ? esc(JSON.stringify(paymentRequired(`https://${APEX}/x402/resolve`), null, 2)) : "(the payload appears here once the rail is configured — the receive address lives in config only)"}
 
 <span style="color:#8b8378"># 2 · Your agent signs an EIP-3009 transferWithAuthorization for the exact amount and retries</span>
-$ curl -i "https://${APEX}/x402/resolve" -H "PAYMENT-SIGNATURE: &lt;base64 PaymentPayload&gt;"
+$ curl -i "https://${APEX}/x402/resolve" -H "PAYMENT-SIGNATURE: base64(PaymentPayload)"
 
 <span style="color:#8b8378"># 3 · The server verifies and settles through the facilitator and answers 200 with a signed receipt</span>
 HTTP/2 200
-PAYMENT-RESPONSE: &lt;base64 settlement&gt;
-{ "confirmation": "x402 settlement confirmed — your stack works end to end", "nonce": "…", "receipt_url": "https://${APEX}/x402/receipt/…", "signature": { "alg": "EdDSA", "kid": "${CFG.kid}" } }</div>`;
+PAYMENT-RESPONSE: base64(SettlementResponse)
+{ "confirmation": "x402 settlement confirmed — your stack works end to end", "nonce": "32 hex characters — the claim ticket", "receipt_url": "https://${APEX}/x402/receipt/ plus the nonce", "signature": { "alg": "EdDSA", "kid": "${CFG.kid}" } }</div>`;
 
 export function doorHtml() {
   const ready = configured();
