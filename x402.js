@@ -87,12 +87,14 @@ export async function facilitatorState(force = false) {
   if (!configured()) return { state: "staged" };
   if (!force && facProbe.checked_at && Date.now() - Date.parse(facProbe.checked_at) < 300000) return facProbe;
   const mode = cdpJwt("GET", "/supported") ? "cdp-jwt" : "static-headers";
+  const rawLines = CFG.facilitatorAuth.replace(/\n/g, "\n").split("\n").filter((l) => l.trim());
+  const shape = { lines: rawLines.length, header_names: rawLines.filter((l) => l.indexOf(":") > 0).map((l) => l.slice(0, l.indexOf(":")).trim()), colonless_lines: rawLines.filter((l) => l.indexOf(":") <= 0).map((l) => `${l.trim().length} chars`), url: CFG.facilitator };
   try {
     const r = await fetch(`${CFG.facilitator}/supported`, { method: "GET", headers: facHeaders("GET", "/supported"), signal: AbortSignal.timeout(20000) });
     const text = await r.text(); let j = {}; try { j = JSON.parse(text); } catch {}
     const kinds = Array.isArray(j.kinds) ? j.kinds : [];
-    facProbe = { checked_at: new Date().toISOString(), reachable: r.status === 200, status: r.status, base_mainnet: kinds.some((k) => k.network === CFG.network && k.scheme === "exact"), mode, networks: [...new Set(kinds.map((k) => k.network))].sort(), detail: r.status === 200 ? undefined : text.slice(0, 160) };
-  } catch (e) { facProbe = { checked_at: new Date().toISOString(), reachable: false, status: null, base_mainnet: false, mode, error: String(e.message || e).slice(0, 100) }; }
+    facProbe = { checked_at: new Date().toISOString(), reachable: r.status === 200, status: r.status, base_mainnet: kinds.some((k) => k.network === CFG.network && k.scheme === "exact"), mode, credential_shape: shape, networks: [...new Set(kinds.map((k) => k.network))].sort(), detail: r.status === 200 ? undefined : text.slice(0, 160) };
+  } catch (e) { facProbe = { checked_at: new Date().toISOString(), reachable: false, status: null, base_mainnet: false, mode, credential_shape: shape, error: String(e.message || e).slice(0, 100) }; }
   return facProbe;
 }
 async function facilitator(path, body) {
