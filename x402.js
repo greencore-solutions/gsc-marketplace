@@ -59,9 +59,44 @@ export function paymentRequired(url) {
     accepts: [{ scheme: "exact", network: CFG.network, amount: CFG.amount, asset: CFG.asset, payTo: CFG.payTo, maxTimeoutSeconds: 60, extra: { assetTransferMethod: "eip3009", name: CFG.assetName, version: CFG.assetVersion } }],
     extensions: {} };
 }
-function facHeaders() { const h = { "Content-Type": "application/json" }; for (const line of CFG.facilitatorAuth.split("\n")) { const i = line.indexOf(":"); if (i > 0) h[line.slice(0, i).trim()] = line.slice(i + 1).trim(); } return h; }
+// Facilitator auth. The credential is "Header: value" lines, OR a CDP key pair as lines
+// "CDP-API-KEY-ID: …" + "CDP-API-KEY-SECRET: …" — CDP's facilitator takes a per-request JWT (2-minute life), minted here.
+function authLines() { const m = {}; for (const line of CFG.facilitatorAuth.replace(/\n/g, "\n").split("\n")) { const k = line.indexOf(":"); if (k > 0) m[line.slice(0, k).trim()] = line.slice(k + 1).trim(); } return m; }
+function cdpJwt(method, path) {
+  const m = authLines(); const id = m["CDP-API-KEY-ID"], secret = m["CDP-API-KEY-SECRET"]; if (!id || !secret) return null;
+  const u = new URL(CFG.facilitator); const now = Math.floor(Date.now() / 1000);
+  const claims = { sub: id, iss: "cdp", aud: ["cdp_service"], nbf: now, exp: now + 120, uris: [`${method} ${u.host}${u.pathname}${path}`] };
+  let key, alg, opts = {};
+  const pem = secret.replace(/\n/g, "\n");
+  if (/BEGIN (EC )?PRIVATE KEY/.test(pem)) { key = crypto.createPrivateKey(pem); alg = "ES256"; opts = { dsaEncoding: "ieee-p1363" }; }
+  else { const raw = Buffer.from(secret, "base64"); const seed = raw.length === 64 ? raw.subarray(0, 32) : raw; key = crypto.createPrivateKey({ key: Buffer.concat([Buffer.from("302e020100300506032b657004220420", "hex"), seed]), format: "der", type: "pkcs8" }); alg = "EdDSA"; }
+  const header = { alg, kid: id, typ: "JWT", nonce: crypto.randomBytes(16).toString("hex") };
+  const signing = `${b64u(JSON.stringify(header))}.${b64u(JSON.stringify(claims))}`;
+  const sig = alg === "ES256" ? crypto.sign("sha256", Buffer.from(signing), { key, ...opts }) : crypto.sign(null, Buffer.from(signing), key);
+  return `${signing}.${b64u(sig)}`;
+}
+function facHeaders(method = "POST", path = "") {
+  const h = { "Content-Type": "application/json" };
+  const jwt = cdpJwt(method, path);
+  if (jwt) h["Authorization"] = `Bearer ${jwt}`; else for (const [k, v] of Object.entries(authLines())) h[k] = v;
+  return h;
+}
+// Cached structural probe of the facilitator — reachable, and does it speak Base mainnet. No values exposed.
+let facProbe = { checked_at: null };
+export async function facilitatorState(force = false) {
+  if (!configured()) return { state: "staged" };
+  if (!force && facProbe.checked_at && Date.now() - Date.parse(facProbe.checked_at) < 300000) return facProbe;
+  const mode = cdpJwt("GET", "/supported") ? "cdp-jwt" : "static-headers";
+  try {
+    const r = await fetch(`${CFG.facilitator}/supported`, { method: "GET", headers: facHeaders("GET", "/supported"), signal: AbortSignal.timeout(20000) });
+    const text = await r.text(); let j = {}; try { j = JSON.parse(text); } catch {}
+    const kinds = Array.isArray(j.kinds) ? j.kinds : [];
+    facProbe = { checked_at: new Date().toISOString(), reachable: r.status === 200, status: r.status, base_mainnet: kinds.some((k) => k.network === CFG.network && k.scheme === "exact"), mode, networks: [...new Set(kinds.map((k) => k.network))].sort(), detail: r.status === 200 ? undefined : text.slice(0, 160) };
+  } catch (e) { facProbe = { checked_at: new Date().toISOString(), reachable: false, status: null, base_mainnet: false, mode, error: String(e.message || e).slice(0, 100) }; }
+  return facProbe;
+}
 async function facilitator(path, body) {
-  const r = await fetch(`${CFG.facilitator}${path}`, { method: "POST", headers: facHeaders(), body: JSON.stringify(body), signal: AbortSignal.timeout(45000) });
+  const r = await fetch(`${CFG.facilitator}${path}`, { method: "POST", headers: facHeaders("POST", path), body: JSON.stringify(body), signal: AbortSignal.timeout(45000) });
   const text = await r.text(); let j = null; try { j = JSON.parse(text); } catch { j = { raw: text.slice(0, 400) }; }
   return { status: r.status, body: j };
 }
@@ -167,7 +202,7 @@ function htmlReceipt(r) {
 export function mountX402(app, ghost) {
   const wantsHtml = (req) => { const a = req.headers.accept || ""; return /text\/html/i.test(a) && !/application\/json/i.test(a.split(",")[0]); };
   app.get("/x402", (req, res) => { ghost(res); if (/text\/markdown/i.test(req.headers.accept || "")) return res.type("text/markdown; charset=utf-8").send(doorMd()); if (wantsHtml(req)) return res.type("text/html; charset=utf-8").send(doorHtml()); res.json(doorJson()); });
-  app.get("/x402.json", (req, res) => { ghost(res); res.json(doorJson()); });
+  app.get("/x402.json", async (req, res) => { ghost(res); res.json({ ...doorJson(), facilitator: await facilitatorState(req.query.probe === "now") }); });
   app.get("/x402/jwks.json", (req, res) => { ghost(res); res.json(jwks()); });
 
   app.get("/x402/resolve", async (req, res) => {
