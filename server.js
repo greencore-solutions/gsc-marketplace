@@ -4,7 +4,7 @@
 //
 // The fifth surface — SELECTION. Eleven read tools over MCP (streamable-http),
 // resolved live against the CPG Knowledge Graph, returned as resolved. Both doors
-// in every complete answer. Free: no payment machinery, no 402 challenge.
+// in every complete answer. Open endpoints; the single paid endpoint is /x402/resolve (x402.js).
 // One image, host-routed: the MCP host, the human apex, and the family TLDs
 // (308 → apex, POST-safe). Born with THE NINETEEN (NG-5).
 // ============================================================
@@ -20,7 +20,7 @@ import { apexHtml, apexMd } from "./apex.js";
 import { mountX402 } from "./x402.js";
 
 const TITLE = "GSC-Marketplace";
-const DESC = "CPG sourcing for AI Agents with x402 — Beauty & Personal Care brands found, verified and answerable across 50 markets on the CPG Knowledge Graph; Instant Messaging for agents, the GSC Trading Desk for humans. The fifth GSC surface: selection. Free.";
+const DESC = "CPG sourcing for AI Agents with x402 — Beauty & Personal Care brands found, verified and answerable across 50 markets on the CPG Knowledge Graph; Instant Messaging for agents, the GSC Trading Desk for humans. The fifth GSC surface: selection.";
 const JURISDICTION = "FR-ECO-10060"; // France Central — the node's SM-ECO-10060 member namespace form (CEO ruling 2026-08-22)
 
 // ---------- THE NINETEEN (NG-5) — host-keyed, per request ----------
@@ -65,7 +65,7 @@ const envelope = (body, extra = {}) => ({
   ...body,
   next_steps: nextSteps(),
   surfaces: Object.fromEntries(Object.values(SURFACES).map((s) => [s.role, s.url])),
-  this_server: { mcp: MCP_URL, tools: TOOL_NAMES, registry: REGISTRY, posture: "free — no payment machinery, no 402 challenge; x402 declared as capability (x-gsc-x402: ready)" },
+  this_server: { mcp: MCP_URL, tools: TOOL_NAMES, registry: REGISTRY, posture: "open — no authentication, no payment on this MCP; x402 live: the single paid endpoint is https://gsc-marketplace.ai/x402/resolve, terms in its 402 payload only (x-gsc-x402: ready)" },
   operator: OPERATOR, duns: DUNS, ...extra,
 });
 const t = (obj) => ({ content: [{ type: "text", text: JSON.stringify(obj, null, 2) }] });
@@ -95,7 +95,7 @@ function buildMcp() {
 
   mcp.registerTool("search_brands", {
     title: "Search Beauty & Personal Care brands in a market",
-    description: `${MISSION} Step 1 — FOUND: search the brands the CPG Knowledge Graph covers in one of 50 markets (live, free). Returns brand names from the graph's SPARKS depth surface; then call get_brand to verify, get_brand_identifiers for the identifier policy. Depth: ${KG.depth_line}. Brands, makers and banners are separate registries — never summed.`,
+    description: `${MISSION} Step 1 — FOUND: search the brands the CPG Knowledge Graph covers in one of 50 markets (live). Returns brand names from the graph's SPARKS depth surface; then call get_brand to verify, get_brand_identifiers for the identifier policy. Depth: ${KG.depth_line}. Brands, makers and banners are separate registries — never summed.`,
     inputSchema: { market: MKT, query: z.string().max(80).optional().describe("Optional name fragment (accent-insensitive)"), limit: z.number().int().min(1).max(200).optional().describe("Max results, default 50") },
   }, async ({ market, query, limit }) => {
     const m = member(market);
@@ -199,9 +199,9 @@ function buildMcp() {
 
   mcp.registerTool("get_x402_rail", {
     title: "x402 capability declaration",
-    description: "What GSC-Marketplace declares about x402: network, asset, status — and nothing else. Capability, never terms: no price is published on any GSC surface, no 402 challenge is issued; everything here is free in v1.",
+    description: "What GSC-Marketplace declares about x402: header, network, asset, status — and where the single paid endpoint lives (https://gsc-marketplace.ai/x402/resolve; its terms are stated in its 402 payload only, never here). Door: https://gsc-marketplace.ai/x402 · skill: x402-settlement.",
     inputSchema: {},
-  }, async () => t(envelope({ signal: "ACM-200", state: "ALLOW", posture: POSTURE.v1, x402: POSTURE.x402, wire: "every gen-2 GSC response carries x-gsc-x402: ready (header 19 of the Ghost Nineteen)" })));
+  }, async () => t(envelope({ signal: "ACM-200", state: "ALLOW", posture: POSTURE.v1, x402: POSTURE.x402, door: "https://gsc-marketplace.ai/x402", paid_endpoint: "https://gsc-marketplace.ai/x402/resolve", skill: "https://gsc-marketplace.ai/.well-known/agent-skills/x402-settlement/SKILL.md", wire: "every gen-2 GSC response carries x-gsc-x402: ready (header 19 of the Ghost Nineteen)" })));
 
   mcp.registerTool("get_radar", {
     title: "GSC Radar — the network numbers bulletin",
@@ -251,7 +251,7 @@ app.use((req, res, next) => {
 
 // Discovery kit (17-check set) + apex HTML/markdown — registered before /mcp and the JSON root.
 mountKit(app, { title: TITLE, desc: DESC, ghost: ghostNineteen, apexHtml, apexMd });
-// x402 — the live test endpoint (door free; /x402/resolve is the single paid endpoint)
+// x402 — the live test endpoint (open door; /x402/resolve is the single paid endpoint)
 mountX402(app, ghostNineteen);
 
 // Public JSON for the WebMCP tool and humans: brands per market (same source as search_brands)
@@ -289,7 +289,7 @@ app.get("/aio-fleet.json", bc(() => AIO_FLEET));
 // Root on the MCP host — the brochure JSON (the apex root is HTML via the kit)
 app.get("/", bc((req) => ({
   service: "GSC-Marketplace",
-  what: `GSC-MARKETPLACE v${VERSION} — THE SELECTION SURFACE. ${MISSION} ${KG.depth_line} on the CPG Knowledge Graph (classification standard: SPARKS). Eleven MCP tools: search_brands · get_brand · get_brand_identifiers · get_marketplace_operators · instant_message_agents · contact_trading_desk · get_x402_rail · get_radar · get_cpg_knowledge_graph · get_acm_68000 · get_aio_agent_fleet. Two doors, never mixed — Instant Messaging for agents, the GSC Trading Desk for humans. Everything free; x402 declared as capability (x-gsc-x402: ready). AI Orderability (AIO) Agents: ${AIO_FLEET.program_total} signed, resident resolvers across ${AIO_FLEET.hosts.length} regions. ACM-68000 protocol. GSC is a Microsoft AI Cloud Partner.`,
+  what: `GSC-MARKETPLACE v${VERSION} — THE SELECTION SURFACE. ${MISSION} ${KG.depth_line} on the CPG Knowledge Graph (classification standard: SPARKS). Eleven MCP tools: search_brands · get_brand · get_brand_identifiers · get_marketplace_operators · instant_message_agents · contact_trading_desk · get_x402_rail · get_radar · get_cpg_knowledge_graph · get_acm_68000 · get_aio_agent_fleet. Two doors, never mixed — Instant Messaging for agents, the GSC Trading Desk for humans. x402 live: the single paid endpoint is https://gsc-marketplace.ai/x402/resolve (terms in its 402 payload only); every other endpoint is open (x-gsc-x402: ready). AI Orderability (AIO) Agents: ${AIO_FLEET.program_total} signed, resident resolvers across ${AIO_FLEET.hosts.length} regions. ACM-68000 protocol. GSC is a Microsoft AI Cloud Partner.`,
   mission: MISSION,
   operator: OPERATOR, operator_url: OPERATOR_URL, duns: DUNS, microsoft_partner: "Microsoft AI Cloud Partner",
   endpoint: `https://${hostOf(req)}`, version: VERSION, role: "marketplace-selection-mcp", stateless: true, posture: POSTURE.v1,

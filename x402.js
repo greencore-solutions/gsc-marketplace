@@ -1,5 +1,5 @@
 // x402.js — the live x402 test counterparty on gsc-marketplace.ai (CEO order 2026-08-23)
-// /x402            FREE door (machine-doc register): teaches x402, shows the exchange, the Nineteen
+// /x402            open door (machine-doc register): teaches x402, shows the exchange, the Nineteen
 // /x402/resolve    the single paid endpoint: unpaid → HTTP 402 (x402 v2 payload; HTML twin on browser Accept)
 //                  paid → verify + settle via facilitator → HTTP 200 signed receipt (Ed25519, estate receipt key)
 // /x402/receipt/:nonce  durable receipt — JSON for machines, HTML for humans; the nonce is the claim ticket
@@ -33,7 +33,8 @@ const unb64json = (s) => JSON.parse(Buffer.from(s, "base64").toString("utf8"));
 // ---------- receipt signing ----------
 function signReceipt(body) {
   const key = crypto.createPrivateKey(CFG.keyPem);
-  const canon = JSON.stringify(body, Object.keys(body).sort());
+  const sortDeep = (v) => Array.isArray(v) ? v.map(sortDeep) : (v && typeof v === "object") ? Object.fromEntries(Object.keys(v).sort().map((k) => [k, sortDeep(v[k])])) : v;
+  const canon = JSON.stringify(sortDeep(body));
   return { alg: "EdDSA", kid: CFG.kid, canonicalization: "JSON sorted keys, no whitespace, UTF-8", value: b64u(crypto.sign(null, Buffer.from(canon, "utf8"), key)) };
 }
 export const jwks = () => ({ keys: [{ kty: "OKP", crv: "Ed25519", kid: CFG.kid, x: CFG.jwkX, use: "sig", alg: "EdDSA" }] });
@@ -186,7 +187,7 @@ function html402(pr) {
   </tbody></table>
   <h2>The exchange</h2>
   ${exchangeBlock(true)}
-  <h2>Free doors</h2>
+  <h2>Open doors</h2>
   <p class="meta"><a href="https://${APEX}/.well-known/agent-card.json">Agent card</a> · Instant Messaging for agents: ${DOORS.instant_messaging.inbound} (declared by x-gsc-inbound) · <a href="${DOORS.trading_desk.url}">GSC Trading Desk</a> · <a href="https://${APEX}/x402">the x402 door</a></p>`);
 }
 function htmlReceipt(r) {
