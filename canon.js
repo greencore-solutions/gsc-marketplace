@@ -5,7 +5,7 @@
 // (2026-08-22), or a pointer to the surface that answers live.
 // ============================================================
 
-export const VERSION = "1.0.3";
+export const VERSION = "1.0.4";
 export const OPERATOR = "GreenCore Solutions Corp.";
 export const OPERATOR_URL = "https://gsc-em.com";
 export const DUNS = "24-336-6774";

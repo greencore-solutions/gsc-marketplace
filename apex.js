@@ -15,10 +15,10 @@ export function apexHtml() {
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>GSC-Marketplace — CPG sourcing for AI Agents | GreenCore Solutions Corp.</title>
-<meta name="description" content="GSC-Marketplace: CPG sourcing for AI Agents with x402 — Beauty & Personal Care brands found, verified and answerable across 50 markets; Instant Messaging for agents, the GSC Trading Desk for humans. Free.">
+<meta name="description" content="GSC-Marketplace: CPG sourcing for AI Agents with x402 — Beauty & Personal Care brands found, verified and answerable across 50 markets; Instant Messaging for agents, the GSC Trading Desk for humans.">
 <link rel="canonical" href="https://${HOSTS.apex}/">
 <meta property="og:title" content="GSC-Marketplace — CPG sourcing for AI Agents">
-<meta property="og:description" content="A brand it can act on — found, verified, answerable. ${KG.depth_line}. Eleven MCP tools. Two doors. Free.">
+<meta property="og:description" content="A brand it can act on — found, verified, answerable. ${KG.depth_line}. Eleven MCP tools. Two doors.">
 <meta property="og:url" content="https://${HOSTS.apex}/">
 <meta property="og:type" content="website">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath fill='%23141414' fill-rule='evenodd' d='M50 5a45 45 0 1 0 0 90 45 45 0 0 0 0-90zm0 24a21 21 0 1 1 0 42 21 21 0 0 1 0-42z'/%3E%3C/svg%3E">
@@ -73,7 +73,7 @@ section{padding:80px 0;border-top:1px solid var(--hair)}
 .spine .ar{align-self:center;color:var(--orange);font-size:20px;font-weight:700}
 .methods table{width:100%;border-collapse:collapse;margin-top:30px;table-layout:fixed}
 .methods td{padding:14px 12px;border-top:1px solid var(--hair);vertical-align:top;font-size:15px;overflow-wrap:break-word}
-.methods td:first-child{font-family:'IBM Plex Mono',monospace;font-size:13px;color:var(--orange);white-space:nowrap;font-weight:500;width:240px}
+.methods td:first-child{font-family:'IBM Plex Mono',monospace;font-size:13px;color:var(--orange);white-space:normal;overflow-wrap:anywhere;word-break:break-word;font-weight:500;width:240px}
 @media(max-width:700px){.methods td{display:block;width:100%!important;border-top:0;padding:6px 0}.methods tr{display:block;border-top:1px solid var(--hair);padding:10px 0}.methods td:first-child{padding-top:14px}}
 .sec-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:34px}
 .sec{border:1px solid var(--hair);border-radius:12px;background:var(--panel);padding:22px 20px}
@@ -110,7 +110,7 @@ footer .legal{margin-top:38px;padding-top:20px;border-top:1px solid var(--hair);
   <div class="eyebrow">GSC-MARKETPLACE · THE FIFTH SURFACE · SELECTION</div>
   <h1>CPG sourcing for AI Agents.</h1>
   <p class="sub">A brand it can act on — <em>found, verified, answerable</em>.</p>
-  <p class="mech">When a marketplace or retail sourcing agent calls GSC-Marketplace, it leaves with a Beauty &amp; Personal Care brand it can act on — resolved live on the CPG Knowledge Graph across 50 markets — and the two doors to act through: Instant Messaging for agents, the human-in-the-loop GSC Trading Desk. Everything is free.</p>
+  <p class="mech">When a marketplace or retail sourcing agent calls GSC-Marketplace, it leaves with a Beauty &amp; Personal Care brand it can act on — resolved live on the CPG Knowledge Graph across 50 markets — and the two doors to act through: Instant Messaging for agents, the human-in-the-loop GSC Trading Desk.</p>
   <p class="triad">Found<i>.</i> Verified<i>.</i> Answerable<i>.</i></p>
   <div class="cta-row">
     <a class="btn primary" href="${TD}">Talk to the GSC Trading Desk</a>
@@ -130,7 +130,6 @@ footer .legal{margin-top:38px;padding-top:20px;border-top:1px solid var(--hair);
     <div class="chip"><b>11</b><span>MCP tools on mcp.gsc-marketplace.ai</span></div>
     <div class="chip"><b>2</b><span>doors — agents and humans, never mixed</span></div>
     <div class="chip"><b>19</b><span>wire headers on every response, x-gsc-x402: ready</span></div>
-    <div class="chip"><b>0</b><span>prices published. Free.</span></div>
   </div>
   <p style="margin-top:18px;font-size:14px;color:var(--grey)">Brands, makers, and retail banners are separate registries — never summed. SPARKS is the classification standard behind the graph.</p>
 </div></section>
@@ -214,7 +213,7 @@ footer .legal{margin-top:38px;padding-top:20px;border-top:1px solid var(--hair);
 
 <footer><div class="wrap">
   <div class="cols">
-    <div><h4>GreenCore Solutions Corp.</h4><p>GSC-Marketplace — CPG sourcing for AI Agents with x402. Beauty &amp; Personal Care brands found, verified and answerable; Instant Messaging for agents; the GSC Trading Desk for humans. Free.</p></div>
+    <div><h4>GreenCore Solutions Corp.</h4><p>GSC-Marketplace — CPG sourcing for AI Agents with x402. Beauty &amp; Personal Care brands found, verified and answerable; Instant Messaging for agents; the GSC Trading Desk for humans.</p></div>
     <div><h4>Surfaces</h4><ul>
       <li><a href="https://${HOSTS.mcp}" class="mono">${HOSTS.mcp}</a></li>
       <li><a href="https://mcp.cpgknowledgegraph.ai" class="mono">mcp.cpgknowledgegraph.ai</a></li>
@@ -253,7 +252,6 @@ When a marketplace or retail sourcing agent calls, it leaves with a brand it can
 - ${KG.depth_line} (brands, makers, banners are separate registries — never summed; classification standard: SPARKS)
 - 11 MCP tools on \`${MCP}\`: ${TOOL_NAMES.map(t => "`" + t + "`").join(", ")}
 - 19 wire headers on every response, including \`x-gsc-x402: ready\`
-- 0 prices published — everything is free
 
 ## Two doors, never mixed
 
