@@ -5,7 +5,7 @@
 // (2026-08-22), or a pointer to the surface that answers live.
 // ============================================================
 
-export const VERSION = "1.2.0";
+export const VERSION = "1.2.1";
 export const OPERATOR = "GreenCore Solutions Corp.";
 export const OPERATOR_URL = "https://gsc-em.com";
 export const DUNS = "24-336-6774";
@@ -53,7 +53,7 @@ export const DOORS = {
 
 // Posture (NG-3 §3) + x402 capability (NG-5 header 19; NG-4 §4)
 export const POSTURE = {
-  v1: "Max discovery. Every endpoint open — no authentication, no payment — except one: /x402/resolve, the live x402 test endpoint, whose terms are stated in its 402 payload only. No pricing is published in copy on any GSC surface.",
+  v1: "Max discovery. Every endpoint open — no authentication, no payment — except one: /api, the live x402 test endpoint, whose terms are stated in its 402 payload only. No pricing is published in copy on any GSC surface.",
   x402: {
     protocol: "x402",
     header: { name: "x-gsc-x402", value: "ready" },

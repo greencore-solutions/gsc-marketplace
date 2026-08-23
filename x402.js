@@ -1,6 +1,6 @@
 // x402.js — the live x402 test counterparty on gsc-marketplace.ai (CEO order 2026-08-23)
 // /x402            open door (machine-doc register): teaches x402, shows the exchange, the Nineteen
-// /x402/resolve    the single paid endpoint: unpaid → HTTP 402 (x402 v2 payload; HTML twin on browser Accept)
+// /api    the single paid endpoint: unpaid → HTTP 402 (x402 v2 payload; HTML twin on browser Accept)
 //                  paid → verify + settle via facilitator → HTTP 200 signed receipt (Ed25519, estate receipt key)
 // /x402/receipt/:nonce  durable receipt — JSON for machines, HTML for humans; the nonce is the claim ticket
 // Terms live in the 402 payload only. The receive address comes from config (X402_PAY_TO) and appears
@@ -133,14 +133,14 @@ const shell = (title, inner) => `<!doctype html><html lang="en"><head><meta char
 const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 
 const exchangeBlock = (ready) => `<div class="surfaces"><span style="color:#8b8378"># 1 · Ask for the resource — the server answers 402 with the terms (x402 v2)</span>
-$ curl -i "https://${APEX}/x402/resolve"
+$ curl -i "https://${APEX}/api"
 HTTP/2 402
 PAYMENT-REQUIRED: base64(JSON body below)
-${ready ? esc(JSON.stringify(exampleTerms(`https://${APEX}/x402/resolve`), null, 2)) : "(the payload appears here once the rail is configured — the receive address lives in config only)"}
+${ready ? esc(JSON.stringify(exampleTerms(`https://${APEX}/api`), null, 2)) : "(the payload appears here once the rail is configured — the receive address lives in config only)"}
 <span style="color:#8b8378"># the receive address (payTo) is stated in the live 402 payload only — never on this page</span>
 
 <span style="color:#8b8378"># 2 · Your agent signs an EIP-3009 transferWithAuthorization for the exact amount and retries</span>
-$ curl -i "https://${APEX}/x402/resolve" -H "PAYMENT-SIGNATURE: base64(PaymentPayload)"
+$ curl -i "https://${APEX}/api" -H "PAYMENT-SIGNATURE: base64(PaymentPayload)"
 
 <span style="color:#8b8378"># 3 · The server verifies and settles through the facilitator and answers 200 with a signed receipt</span>
 HTTP/2 200
@@ -159,18 +159,18 @@ export function doorHtml() {
   <h2>What x402 is</h2>
   <p class="body">x402 is an open payment protocol for the web's HTTP 402 status: a server answers a request with 402 and a machine-readable statement of terms; the client signs a transfer authorization; the server verifies and settles it and answers 200. The protocol is open, stewarded under the Linux Foundation, and transport-agnostic — an AI Agent pays without an account, a checkout, or a human in the loop.</p>
   <h2>What this endpoint does</h2>
-  <p class="body">${APEX}/x402/resolve is the ecosystem's test counterparty. A developer points an x402-capable agent at it and proves the whole stack end to end with a real settlement on Base: the 402 challenge, the signed authorization, the facilitator settlement, and a signed receipt that verifies offline against this host's JWKS. The receipt resolves forever at /x402/receipt/ plus its nonce — the nonce is the claim ticket. Every settlement also emits an IA-MESSAGE to the transaction MCP, where it appears as a read-only desk row beside the RFQs.</p>
+  <p class="body">${APEX}/api is the ecosystem's test counterparty. A developer points an x402-capable agent at it and proves the whole stack end to end with a real settlement on Base: the 402 challenge, the signed authorization, the facilitator settlement, and a signed receipt that verifies offline against this host's JWKS. The receipt resolves forever at /x402/receipt/ plus its nonce — the nonce is the claim ticket. Every settlement also emits an IA-MESSAGE to the transaction MCP, where it appears as a read-only desk row beside the RFQs.</p>
   <h2>The exchange</h2>
   ${exchangeBlock(ready)}
   <h2>The 402 challenge</h2>
   <p class="meta">The payload is protocol fact — it is the terms. Network ${CFG.network} (Base) · asset USDC (${CFG.asset}) · scheme exact · EIP-3009 transferWithAuthorization · 60-second window. Amount and receive address are stated in the payload only.</p>
   <h2>Machine Surfaces</h2>
-  <p class="meta">/x402/resolve · /x402/receipt/{nonce} · /x402/jwks.json · /x402.json · /llms.txt · /.well-known/agent-card.json · /.well-known/mcp/server-card.json · /.well-known/ai-catalog.json</p>
+  <p class="meta">/api · /x402/receipt/{nonce} · /x402/jwks.json · /x402.json · /llms.txt · /.well-known/agent-card.json · /.well-known/mcp/server-card.json · /.well-known/ai-catalog.json</p>
   <h2>Identity Beacons</h2>
   <p class="meta">19 GSC headers (the Nineteen, gen-2 set) on every response, including x-gsc-x402: ready. Per-request x-gsc-timestamp and x-gsc-nonce regenerate as proof-of-liveness. Receipts are signed with key id ${CFG.kid}; the public key is at /x402/jwks.json.</p>`);
 }
-export function doorMd() { return `# x402 — the live x402 test endpoint\n\n> ${APEX}/x402 · Agentic payments on GSC-Marketplace — a live x402 endpoint any AI Agent can settle against.\n\nx402 is an open payment protocol (Linux Foundation) for HTTP 402: terms in the 402 payload, a signed EIP-3009 authorization from the client, facilitator settlement, 200 with a receipt.\n\n- Paid endpoint: https://${APEX}/x402/resolve (network ${CFG.network}, asset USDC, scheme exact; terms in the payload only)\n- Receipt: https://${APEX}/x402/receipt/{nonce} — JSON for machines, HTML for humans; signed (EdDSA, kid ${CFG.kid}); JWKS at /x402/jwks.json\n- Every settlement emits an IA-MESSAGE to ${DOORS.instant_messaging.mcp}\n\nOperated by GreenCore Solutions Corp. · D-U-N-S ${DUNS}\n`; }
-export function doorJson() { return { surface: "x402 test endpoint", state: configured() ? "live" : "staged — rail not configured", paid_endpoint: `https://${APEX}/x402/resolve`, network: CFG.network, asset: { symbol: "USDC", contract: CFG.asset }, scheme: "exact", transfer: "eip3009", receipt: { pattern: `https://${APEX}/x402/receipt/{nonce}`, signature: { alg: "EdDSA", kid: CFG.kid, jwks: `https://${APEX}/x402/jwks.json` } }, ia_message: { on: "every settlement", mcp: DOORS.instant_messaging.mcp }, next_steps: nextSteps(APEX), operator: OPERATOR, duns: DUNS }; }
+export function doorMd() { return `# x402 — the live x402 test endpoint\n\n> ${APEX}/x402 · Agentic payments on GSC-Marketplace — a live x402 endpoint any AI Agent can settle against.\n\nx402 is an open payment protocol (Linux Foundation) for HTTP 402: terms in the 402 payload, a signed EIP-3009 authorization from the client, facilitator settlement, 200 with a receipt.\n\n- Paid endpoint: https://${APEX}/api (network ${CFG.network}, asset USDC, scheme exact; terms in the payload only)\n- Receipt: https://${APEX}/x402/receipt/{nonce} — JSON for machines, HTML for humans; signed (EdDSA, kid ${CFG.kid}); JWKS at /x402/jwks.json\n- Every settlement emits an IA-MESSAGE to ${DOORS.instant_messaging.mcp}\n\nOperated by GreenCore Solutions Corp. · D-U-N-S ${DUNS}\n`; }
+export function doorJson() { return { surface: "x402 test endpoint", state: configured() ? "live" : "staged — rail not configured", paid_endpoint: `https://${APEX}/api`, network: CFG.network, asset: { symbol: "USDC", contract: CFG.asset }, scheme: "exact", transfer: "eip3009", receipt: { pattern: `https://${APEX}/x402/receipt/{nonce}`, signature: { alg: "EdDSA", kid: CFG.kid, jwks: `https://${APEX}/x402/jwks.json` } }, ia_message: { on: "every settlement", mcp: DOORS.instant_messaging.mcp }, next_steps: nextSteps(APEX), operator: OPERATOR, duns: DUNS }; }
 
 function html402(pr) {
   const a = pr.accepts[0];
@@ -206,6 +206,27 @@ function htmlReceipt(r) {
   <p class="meta"><a href="https://${APEX}/.well-known/agent-card.json">Agent card</a> · Instant Messaging for agents: ${DOORS.instant_messaging.inbound} · <a href="${DOORS.trading_desk.url}">GSC Trading Desk</a> · surfaces: ${Object.values(SURFACES).map((s) => `<a href="${s.url}">${s.role}</a>`).join(" · ")}</p>`);
 }
 
+// Mechanical HTML → Markdown derivation of a served page (no authored copy).
+function htmlToMd(html) {
+  const un = (s) => s.replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/&nbsp;/g, " ").replace(/&amp;/g, "&");
+  let b = (html.match(/<div class="container">([\s\S]*?)<\/div><script/) || [null, html])[1];
+  b = b.replace(/<style[\s\S]*?<\/style>/g, "").replace(/<script[\s\S]*?<\/script>/g, "");
+  b = b.replace(/<div class="surfaces">([\s\S]*?)<\/div>/g, (m, c) => "\n```\n" + un(c.replace(/<[^>]+>/g, "")) + "\n```\n");
+  b = b.replace(/<table>[\s\S]*?<\/table>/g, (t) => {
+    const rows = [...t.matchAll(/<tr>([\s\S]*?)<\/tr>/g)].map((r) => [...r[1].matchAll(/<t[hd][^>]*>([\s\S]*?)<\/t[hd]>/g)].map((c) => un(c[1].replace(/<[^>]+>/g, "")).trim()));
+    if (!rows.length) return "";
+    return "\n| " + rows[0].join(" | ") + " |\n|" + rows[0].map(() => "---").join("|") + "|\n" + rows.slice(1).map((r) => "| " + r.join(" | ") + " |").join("\n") + "\n";
+  });
+  b = b.replace(/<h1>([\s\S]*?)<span class="host">([\s\S]*?)<\/span><\/h1>/g, (m, a, h) => `\n# ${un(a)}\n\n${un(h)}\n`);
+  b = b.replace(/<h1>([\s\S]*?)<\/h1>/g, (m, a) => `\n# ${un(a.replace(/<[^>]+>/g, ""))}\n`);
+  b = b.replace(/<h2>([\s\S]*?)<\/h2>/g, (m, a) => `\n## ${un(a.replace(/<[^>]+>/g, ""))}\n`);
+  b = b.replace(/<h4>([\s\S]*?)<\/h4>/g, (m, a) => `\n**${un(a)}**\n`);
+  b = b.replace(/<div class="badge">([\s\S]*?)<\/div>/g, (m, a) => `\n**${un(a)}**\n`);
+  b = b.replace(/<a href="([^"]*)"[^>]*>([\s\S]*?)<\/a>/g, (m, href, t) => `[${un(t.replace(/<[^>]+>/g, ""))}](${href})`);
+  b = b.replace(/<br\s*\/?>/g, "\n").replace(/<\/p>|<\/div>|<\/footer>/g, "\n").replace(/<[^>]+>/g, "");
+  return un(b).replace(/[ \t]+\n/g, "\n").replace(/\n{3,}/g, "\n\n").trim() + "\n";
+}
+
 // ---------- mount ----------
 export function mountX402(app, ghost) {
   const wantsHtml = (req) => { const a = req.headers.accept || ""; return /text\/html/i.test(a) && !/application\/json/i.test(a.split(",")[0]); };
@@ -213,8 +234,8 @@ export function mountX402(app, ghost) {
   app.get("/x402.json", async (req, res) => { ghost(res); res.json({ ...doorJson(), facilitator: await facilitatorState(req.query.probe === "now") }); });
   app.get("/x402/jwks.json", (req, res) => { ghost(res); res.json(jwks()); });
 
-  app.get("/x402/resolve", async (req, res) => {
-    const url = `https://${APEX}/x402/resolve`;
+  app.get("/api", async (req, res) => {
+    const url = `https://${APEX}/api`;
     if (!configured()) { ghost(res, "ACM-500", "SYSTEM_ERROR"); return res.status(503).json({ error: "x402 rail staged — not configured", signal: "ACM-500", state: "SYSTEM_ERROR", door: `https://${APEX}/x402`, next_steps: nextSteps(APEX) }); }
     const pr = paymentRequired(url);
     const sig = req.headers["payment-signature"] || req.headers["x-payment"];
@@ -236,6 +257,14 @@ export function mountX402(app, ghost) {
     res.json(receipt);
   });
 
+  // /x402/resolve — the document: 200, body = the HTML twin (html402, byte-preserved); Accept: text/markdown → mechanical derivation
+  app.get("/x402/resolve", (req, res) => {
+    const pr = paymentRequired(`https://${APEX}/api`);
+    const html = html402(pr);
+    ghost(res, "ACM-200", "ALLOW");
+    if (/text\/markdown/i.test(req.headers.accept || "")) { const md = htmlToMd(html); res.set("x-markdown-tokens", String(Math.ceil(md.length / 4))); return res.type("text/markdown; charset=utf-8").send(md); }
+    res.type("text/html; charset=utf-8").send(html);
+  });
   app.get("/x402/receipt/:nonce", async (req, res) => {
     const n = String(req.params.nonce || ""); if (!/^[a-f0-9]{24}$/.test(n)) { ghost(res, "ACM-404", "NOT_FOUND"); return res.status(404).json({ error: "not_found", signal: "ACM-404", state: "NOT_FOUND" }); }
     let r = null; try { r = await getReceipt(n); } catch (e) { ghost(res, "ACM-500", "SYSTEM_ERROR"); return res.status(503).json({ error: "receipt store unavailable", detail: String(e.message || e).slice(0, 120) }); }
