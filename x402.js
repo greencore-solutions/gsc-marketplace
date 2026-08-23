@@ -77,6 +77,8 @@ function cdpJwt(method, path) {
   const sig = alg === "ES256" ? crypto.sign("sha256", Buffer.from(signing), { key, ...opts }) : crypto.sign(null, Buffer.from(signing), key);
   return `${signing}.${b64u(sig)}`;
 }
+// Example terms for the door copy: the live payload minus the receive address (payTo lives in the 402 payload only).
+function exampleTerms(url) { const pr = paymentRequired(url); pr.accepts = pr.accepts.map(({ payTo, ...rest }) => rest); return pr; }
 function facHeaders(method = "POST", path = "") {
   const h = { "Content-Type": "application/json" };
   const jwt = cdpJwt(method, path);
@@ -133,7 +135,8 @@ const exchangeBlock = (ready) => `<div class="surfaces"><span style="color:#8b83
 $ curl -i "https://${APEX}/x402/resolve"
 HTTP/2 402
 PAYMENT-REQUIRED: base64(JSON body below)
-${ready ? esc(JSON.stringify(paymentRequired(`https://${APEX}/x402/resolve`), null, 2)) : "(the payload appears here once the rail is configured — the receive address lives in config only)"}
+${ready ? esc(JSON.stringify(exampleTerms(`https://${APEX}/x402/resolve`), null, 2)) : "(the payload appears here once the rail is configured — the receive address lives in config only)"}
+<span style="color:#8b8378"># the receive address (payTo) is stated in the live 402 payload only — never on this page</span>
 
 <span style="color:#8b8378"># 2 · Your agent signs an EIP-3009 transferWithAuthorization for the exact amount and retries</span>
 $ curl -i "https://${APEX}/x402/resolve" -H "PAYMENT-SIGNATURE: base64(PaymentPayload)"
