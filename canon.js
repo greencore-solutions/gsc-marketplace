@@ -5,7 +5,7 @@
 // (2026-08-22), or a pointer to the surface that answers live.
 // ============================================================
 
-export const VERSION = "1.0.2";
+export const VERSION = "1.0.3";
 export const OPERATOR = "GreenCore Solutions Corp.";
 export const OPERATOR_URL = "https://gsc-em.com";
 export const DUNS = "24-336-6774";
@@ -116,17 +116,19 @@ export const AIO_FLEET = {
   identity: "signed Cards (Ed25519, key id gsc-aio-cards-2026-08) verifiable against each host's /.well-known/jwks.json — the NextGen identity register",
   unit_of_remit: "market × category (never a brand)",
   hosts: [
-    { cc: "us", host: "us.gsc-marketplace.ai", jurisdiction: "US-ECO-10060", region: "South Central US", status: "in_build" },
-    { cc: "mx", host: "mx.gsc-marketplace.ai", jurisdiction: "MX-ECO-10060", region: "South Central US (compute) · Mexico Central (storage)", status: "in_build" },
-    { cc: "br", host: "br.gsc-marketplace.ai", jurisdiction: "BR-ECO-10060", region: "Brazil South", status: "in_build" },
-    { cc: "fr", host: "fr.gsc-marketplace.ai", jurisdiction: "FR-ECO-10060", region: "France Central", status: "in_build" },
-    { cc: "uk", host: "uk.gsc-marketplace.ai", jurisdiction: "UK-ECO-10060", region: "UK South", status: "in_build" },
-    { cc: "de", host: "de.gsc-marketplace.ai", jurisdiction: "DE-ECO-10060", region: "Germany West Central", status: "in_build" },
-    { cc: "in", host: "in.gsc-marketplace.ai", jurisdiction: "IN-ECO-10060", region: "Central India", status: "in_build" },
-    { cc: "sg", host: "sg.gsc-marketplace.ai", jurisdiction: "SG-ECO-10060", region: "Southeast Asia", status: "in_build" },
-    { cc: "jp", host: "jp.gsc-marketplace.ai", jurisdiction: "JP-ECO-10060", region: "Japan East", status: "in_build" },
-    { cc: "kr", host: "kr.gsc-marketplace.ai", jurisdiction: "KR-ECO-10060", region: "Korea Central", status: "in_build" },
+    { cc: "us", host: "us.gsc-marketplace.ai", jurisdiction: "US-ECO-10060", region: "South Central US", status: "live", cards: 1000, jwks: "https://us.gsc-marketplace.ai/.well-known/jwks.json", index: "https://us.gsc-marketplace.ai/index.json" },
+    { cc: "mx", host: "mx.gsc-marketplace.ai", jurisdiction: "MX-ECO-10060", region: "South Central US (compute) · Mexico Central (Log Analytics) — Container Apps not GA in Mexico Central", status: "live", cards: 1000, jwks: "https://mx.gsc-marketplace.ai/.well-known/jwks.json", index: "https://mx.gsc-marketplace.ai/index.json" },
+    { cc: "br", host: "br.gsc-marketplace.ai", jurisdiction: "BR-ECO-10060", region: "Brazil South", status: "live", cards: 1000, jwks: "https://br.gsc-marketplace.ai/.well-known/jwks.json", index: "https://br.gsc-marketplace.ai/index.json" },
+    { cc: "fr", host: "fr.gsc-marketplace.ai", jurisdiction: "FR-ECO-10060", region: "France Central", status: "live", cards: 1000, jwks: "https://fr.gsc-marketplace.ai/.well-known/jwks.json", index: "https://fr.gsc-marketplace.ai/index.json" },
+    { cc: "uk", host: "uk.gsc-marketplace.ai", jurisdiction: "UK-ECO-10060", region: "UK South", status: "live", cards: 1000, jwks: "https://uk.gsc-marketplace.ai/.well-known/jwks.json", index: "https://uk.gsc-marketplace.ai/index.json" },
+    { cc: "de", host: "de.gsc-marketplace.ai", jurisdiction: "DE-ECO-10060", region: "Germany West Central", status: "live", cards: 1000, jwks: "https://de.gsc-marketplace.ai/.well-known/jwks.json", index: "https://de.gsc-marketplace.ai/index.json" },
+    { cc: "in", host: "in.gsc-marketplace.ai", jurisdiction: "IN-ECO-10060", region: "Central India", status: "live", cards: 1000, jwks: "https://in.gsc-marketplace.ai/.well-known/jwks.json", index: "https://in.gsc-marketplace.ai/index.json" },
+    { cc: "sg", host: "sg.gsc-marketplace.ai", jurisdiction: "SG-ECO-10060", region: "Southeast Asia", status: "live", cards: 1000, jwks: "https://sg.gsc-marketplace.ai/.well-known/jwks.json", index: "https://sg.gsc-marketplace.ai/index.json" },
+    { cc: "jp", host: "jp.gsc-marketplace.ai", jurisdiction: "JP-ECO-10060", region: "Japan East", status: "live", cards: 1000, jwks: "https://jp.gsc-marketplace.ai/.well-known/jwks.json", index: "https://jp.gsc-marketplace.ai/index.json" },
+    { cc: "kr", host: "kr.gsc-marketplace.ai", jurisdiction: "KR-ECO-10060", region: "Korea Central", status: "live", cards: 1000, jwks: "https://kr.gsc-marketplace.ai/.well-known/jwks.json", index: "https://kr.gsc-marketplace.ai/index.json" },
   ],
+  status_line: "10 hosts live 2026-08-23 — 10,000 signed AIO Agents, verified per host (19 headers, slot extents, signatures, structural guards, agent-readiness scan)",
+  program_total_all_classes: { aio_agents: 10000, gen1_carriers: 22597, total: 32597, label: "32,500+", live_truth: "https://mcp.gsc-fleet.ai/stats.json" },
   gen1_reference: { program: "22,500+ Carrier program", live_truth: "https://mcp.gsc-fleet.ai/stats.json", note: "gen-1 Carrier class is frozen; read its numbers from the fleet MCP, never from here" },
 };
 
