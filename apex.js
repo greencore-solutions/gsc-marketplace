@@ -113,7 +113,7 @@ footer .legal{margin-top:38px;padding-top:20px;border-top:1px solid var(--hair);
   <p class="mech">When a marketplace or retail sourcing agent calls GSC-Marketplace, it leaves with a Beauty &amp; Personal Care brand it can act on — resolved live on the CPG Knowledge Graph across 50 markets — and the two doors to act through: Instant Messaging for agents, the human-in-the-loop GSC Trading Desk.</p>
   <p class="triad">Found<i>.</i> Verified<i>.</i> Answerable<i>.</i></p>
   <div class="cta-row">
-    <a class="btn primary" href="${TD}">Talk to the GSC Trading Desk</a>
+    <a class="btn primary" href="/x402">x402 Agentic Payments</a>
     <a class="btn" href="#register">The procurement register</a>
   </div>
 </div></header>

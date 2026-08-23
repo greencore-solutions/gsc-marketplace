@@ -17,6 +17,7 @@ import { VERSION, OPERATOR, OPERATOR_URL, DUNS, HOSTS, MISSION, SURFACES, DOORS,
 import { kgCall } from "./kg.js";
 import { mountKit, REGISTRY } from "./kit.js";
 import { apexHtml, apexMd } from "./apex.js";
+import { mountX402 } from "./x402.js";
 
 const TITLE = "GSC-Marketplace";
 const DESC = "CPG sourcing for AI Agents with x402 — Beauty & Personal Care brands found, verified and answerable across 50 markets on the CPG Knowledge Graph; Instant Messaging for agents, the GSC Trading Desk for humans. The fifth GSC surface: selection. Free.";
@@ -250,6 +251,8 @@ app.use((req, res, next) => {
 
 // Discovery kit (17-check set) + apex HTML/markdown — registered before /mcp and the JSON root.
 mountKit(app, { title: TITLE, desc: DESC, ghost: ghostNineteen, apexHtml, apexMd });
+// x402 — the live test endpoint (door free; /x402/resolve is the single paid endpoint)
+mountX402(app, ghostNineteen);
 
 // Public JSON for the WebMCP tool and humans: brands per market (same source as search_brands)
 app.get("/brands.json", async (req, res) => {
