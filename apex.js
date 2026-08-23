@@ -224,6 +224,7 @@ footer .legal{margin-top:38px;padding-top:20px;border-top:1px solid var(--hair);
       <li><a href="https://x.com/GSC_Rail_ai">@GSC_Rail_ai</a></li>
       <li><a href="https://x.com/SM_AIO_CPG">@SM_AIO_CPG</a></li>
       <li><a href="https://x.com/ACM68000">@ACM68000</a></li>
+      <li><a href="https://x.com/SM_ESG_CPG">@SM_ESG_CPG</a></li>
       <li><a href="https://x.com/SM_ECO_10060">@SM_ECO_10060</a></li>
     </ul></div>
   </div>
