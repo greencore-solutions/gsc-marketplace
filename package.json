@@ -1,6 +1,6 @@
 {
   "name": "gsc-marketplace",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "description": "GSC-Marketplace — mcp.gsc-marketplace.ai. CPG sourcing for AI Agents with x402. GreenCore Solutions Corp.",
   "type": "module",
   "main": "server.js",
