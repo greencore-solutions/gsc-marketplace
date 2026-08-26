@@ -8,7 +8,7 @@
 
 For a hundred years, being discoverable meant shelf placement and search ranking. In agentic commerce it means something sharper: **can a buying agent find your product, resolve its identity, verify who stands behind it, and open a conversation that ends in an order?** Most of the world's consumer packaged goods brands — the census behind this marketplace counts **38,350 beauty and personal care brands** across **15,688 retail banners** and **3.29 million points of sale** ([cpgknowledgegraph.ai](https://cpgknowledgegraph.ai/)) — will never build agent infrastructure of their own. They don't have to. That is the entire point of this marketplace.
 
-**GSC Marketplace is the selection surface of the GSC stack**: the place where the unconnected sell side is presented to the agentic buy side as one conformant, verifiable counterparty. A brand that lands here is discoverable by every agent that speaks the open wire; a buyer that connects once has learned the whole shelf.
+**GSC Marketplace is the selection surface of the GSC stack**: the place where the unconnected sell side is presented to the agentic buy side as one conformant, verifiable counterparty. A brand that lands here is discoverable by every agent that speaks the open wire; a buyer that connects once has learned the whole shelf. Operated by GreenCore Solutions Corp.
 
 ## The AI Orderability (AIO) Agent Class
 
